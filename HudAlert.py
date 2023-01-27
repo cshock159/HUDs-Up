@@ -1,10 +1,12 @@
 import pyautogui
 import time
-import random
 import winsound
+import os
+
+user = os.getlogin()
 
 # The path to the image file that we want to search for on the screen
-image_file = 'C:/users/cshoc/Downloads/HudsUp.jpg'
+image_file = 'C:/users/' + user + '/Downloads/HUDAlert/HudsUp.jpg'
 
 # If the image was found on the screen
 while(1==1):
