@@ -13,5 +13,6 @@ while(1==1):
     image_location = pyautogui.locateOnScreen(image_file, confidence=.75)
     if image_location is not None:
         # Get the coordinates of the image
-        winsound.PlaySound('C:/Windows/Media/Windows Battery Critical.wav', winsound.SND_FILENAME)
+        #winsound.PlaySound('C:/Windows/Media/Windows Battery Critical.wav', winsound.SND_FILENAME)
+        pyautogui.hotkey('7','esc')
     time.sleep(5)
