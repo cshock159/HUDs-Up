@@ -4,8 +4,9 @@
 
 ### Requirements
 1) Python3+ Installed
-2) PyAutoGui PIP package installed
+2) PyAutoGui/Pillow/OpenCV PIP packages installed
 3) Standard Windows Deployment (7/8/10/11)
+4) 1080 monitor
 
 ### Install
 1) Download the ZIP
