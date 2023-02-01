@@ -1,4 +1,5 @@
 import pyautogui
+import pydirectinput
 import time
 import winsound
 import os
@@ -12,7 +13,9 @@ image_file = 'C:/users/' + user + '/Downloads/HUDAlert/HudsUp.jpg'
 while(1==1):
     image_location = pyautogui.locateOnScreen(image_file,confidence=.9)
     if image_location is not None:
-        # Get the coordinates of the image
         winsound.PlaySound('C:/Windows/Media/Windows Battery Critical.wav', winsound.SND_FILENAME)
-        pyautogui.click(button='middle')
+        pydirectinput.keyDown('7')
+        pydirectinput.keyDown('esc')
+        pydirectinput.keyUp('esc')
+        pydirectinput.keyUp('7')
     time.sleep(5)
