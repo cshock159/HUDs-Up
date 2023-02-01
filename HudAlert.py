@@ -26,7 +26,7 @@ audio_autoclose = [
     [sg.Text("Browse allows you to select a custom image for detecting the HUD.",font=("Comic Sans MS","9"))],
     [sg.FilesBrowse(button_text="Browse",key="uploaded_image",tooltip="Allows for custom image upload, if you are using a monitor outside of 1080.")],
     [sg.Text("Allows you to select the confidence for detection.",font=("Comic Sans MS","9"))],
-    [sg.Slider(range=(0,1),orientation='h',tick_interval=.25,resolution=.05,default_value=.9,key="confidence",tooltip="Sets confidence for image detection. Higher = Less Sensitive.")],
+    [sg.Slider(range=(0,1),orientation='h',tick_interval=.5,resolution=.05,default_value=.9,key="confidence",tooltip="Sets confidence for image detection. Higher = Less Sensitive.")],
     [sg.Checkbox(text="Audio Chime",default=True,tooltip="Plays an audio chime when HUDs-Up detects the HUD.",key="audio_cb"),
     sg.Checkbox(text="Auto Close HUD",default=True,tooltip="Auto Closes the HUD.",key="autoclose_cb"),
     sg.Button(button_text="Update Options", size=(12,1),tooltip="Updates the options chosen.")],
@@ -73,17 +73,16 @@ layout = [
 window = sg.Window(title="HUDs-Up", layout=layout, size=(500,550),icon=(menuicon),titlebar_icon=menuicon)
 while True:
     event, values = window.Read()
-    try:
-        currentvalue = str(values["confidence"])
-    except:
-        currentvalue = "Not set"
+    if event == sg.WIN_CLOSED:
+        break
+    currentvalue = str(values["confidence"])
     if event == "Start":
         if values["uploaded_image"] == "":
             image_file = 'C:/users/' + user + '/Downloads/HUDAlert/HudsUp.jpg'
         elif values["uploaded_image"]:
             image_file = values["uploaded_image"]
         SHOULD_TERMINATE = False
-        print("Starting HUDs-UP with image: " + image_file + " and a confidence of" + currentvalue)
+        print("Starting HUDs-UP with image: " + image_file + " and a confidence of " + currentvalue)
         thread = threading.Thread(target=keyPush, daemon=True)
         thread.start()
     elif event == "Stop":
@@ -100,8 +99,6 @@ while True:
         elif values["uploaded_image"]:
             image_file = values["uploaded_image"]
         SHOULD_TERMINATE = False
-        print("Starting HUDs-UP with image: " + image_file + " and a confidence of" + currentvalue)        
+        print("Starting HUDs-UP with image: " + image_file + " and a confidence of " + currentvalue)        
         thread = threading.Thread(target=keyPush, daemon=True)
         thread.start()
-    elif event == sg.WIN_CLOSED:
-        break
