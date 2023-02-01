@@ -22,7 +22,7 @@ start_stop = [
 
 audio_autoclose = [
     [sg.Text("Additional Options",font=("Comic Sans MS","18","bold"))],
-    [sg.Text("You must click 'Update Options' for any changes below to stick.",font=("Comic Sans MS","9","bold"))],    
+    [sg.Text("You must click 'Update Options' for any changes below to stick.",font=("Comic Sans MS","10","bold"))],    
     [sg.Text("Browse allows you to select a custom image for detecting the HUD.",font=("Comic Sans MS","9"))],
     [sg.FilesBrowse(button_text="Browse",key="uploaded_image",tooltip="Allows for custom image upload, if you are using a monitor outside of 1080.")],
     [sg.Text("Allows you to select the confidence for detection.",font=("Comic Sans MS","9"))],
@@ -88,12 +88,18 @@ while True:
     elif event == "Stop":
         print("Terminating HUDs Up.")
         SHOULD_TERMINATE = True
-        thread.join()
-        print("HUDs-Up Stopped.")
+        try:
+            thread.join()
+            print("HUDs-Up Stopped.")
+        except:
+            print("Nothing to stop.")
     elif event == "Update Options":
         print("Refreshing HUDs-Up.")
         SHOULD_TERMINATE = True
-        thread.join()
+        try:
+            thread.join()
+        except:
+            print("Nothing to refresh. Starting")
         if values["uploaded_image"] == "":
             image_file = 'C:/users/' + user + '/Downloads/HUDAlert/HudsUp.jpg'
         elif values["uploaded_image"]:
