@@ -5,6 +5,8 @@ import pydirectinput
 import time
 import winsound
 import os
+import numpy
+
 sg.theme('DarkBlue14')
 
 #Few different variables we need to set out the gate
@@ -18,7 +20,7 @@ start_stop = [
     [sg.Button(button_text="Start", size=(10,2),button_color="Green",bind_return_key=True,tooltip="Start HUDs-Up with the options chosen below."),
     sg.Button(button_text="Stop", size=(10,2),button_color="red",tooltip="Stops HUDs-Up.")], 
 ]
-
+ 
 audio_autoclose = [
     [sg.Text("Additional Options",font=("Comic Sans MS","18","bold"))],
     [sg.Text("You must click 'Update Options' for any changes below to stick.",font=("Comic Sans MS","10","bold"))],    
@@ -34,7 +36,6 @@ audio_autoclose = [
 ]
 
 output_console = [
-    [sg.Text("Console Output",font=("Comic Sans MS","18","bold"))],
     [sg.Output(text_color="Red",background_color="#000000",size=(90,5))]
 ]
 
@@ -64,14 +65,14 @@ layout = [
         sg.Column(audio_autoclose)
         ],
         [
-        sg.HorizontalSeparator(p=10)
+        sg.HorizontalSeparator(p=5)
         ],
         [
         sg.Column(output_console)
         ]
 ]
 
-window = sg.Window(title="HUDs-Up", layout=layout, size=(500,600),icon=(menuicon),titlebar_icon=menuicon)
+window = sg.Window(title="HUDs-Up", layout=layout, size=(500,575),icon=(menuicon),titlebar_icon=menuicon)
 while True:
     event, values = window.Read()
     if event == sg.WIN_CLOSED:
@@ -79,7 +80,7 @@ while True:
     currentvalue = str(values["confidence"])
     if event == "Start":
         if values["uploaded_image"] == "":
-            image_file = 'C:/users/' + user + '/Downloads/HUDAlert/HudsUp.jpg'
+            image_file = (os.getcwd().replace("\\","/") + '/HudsUp.jpg')
         elif values["uploaded_image"]:
             image_file = values["uploaded_image"]
         SHOULD_TERMINATE = False
@@ -102,7 +103,7 @@ while True:
         except:
             print("Nothing to refresh. Starting")
         if values["uploaded_image"] == "":
-            image_file = 'C:/users/' + user + '/Downloads/HUDAlert/HudsUp.jpg'
+            image_file = (os.getcwd().replace("\\","/") + '/HudsUp.jpg')
         elif values["uploaded_image"]:
             image_file = values["uploaded_image"]
         SHOULD_TERMINATE = False
