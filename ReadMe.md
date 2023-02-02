@@ -12,10 +12,10 @@
 3) Open the HUDAlert folder and run HudAlert.exe
 
 ### Options
-[image.png]
+![image](https://user-images.githubusercontent.com/91140740/216475449-9893ef0c-d505-47a1-9e03-be4053aa9631.png)
 1) Start/Stop : Super self explanatory. When clicking "Start", HUDs-Up will start with the options selected below.
 2) Browse : Allows you to select your own custom image. This is important if you are using a monitor that is NOT 1080.
-## IF YOU CHANGE ANY OF THESE OPTIONS AFTER THE PROGRAM IS STARTED, YOU MUST CLICK "UPDATE OPTIONS"
+### IF YOU CHANGE ANY OF THESE OPTIONS AFTER THE PROGRAM IS STARTED, YOU MUST CLICK "UPDATE OPTIONS"
 3) Confidence : This allows you to adjust how "sensitive" the program is. The higher your confidence, the less sensitive the program will be. You may start having issues if your confidence is set lower than .5.
 4) Frequency : Allows you to determine how often the HUDs-Up checks for the HUD. This is purely personal preference
 5) Audio Chime : If this is selected, an Audio Chime will be played with HUDs-Up detects the HUD. Unchecking this removes the chime. 
