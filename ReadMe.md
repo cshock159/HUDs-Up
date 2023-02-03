@@ -1,6 +1,9 @@
-## Apex "HUD is Up" Alert v1.0.0.
+## Apex "HUD is Up" Alert v1.0.3.
 
-##### Detects and notifies/auto-closes the Apex Legends Heads Up Display (HUD).
+##### Detects and notifies/auto-closes the Apex Legends Heads Up Display (HUD). 
+
+#### Updates
+1.0.3 includes an update with auto saving of configurations used previously. To enable the auto save, simply choose your options, start Huds-Up, and when you're done, exist the program. Values will be automatically saved.
 
 ### Requirements
 1) Standard Windows Deployment (7/8/10/11)
