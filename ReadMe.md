@@ -1,4 +1,4 @@
-## Apex "HUD is Up" Alert.
+## Apex "HUD is Up" Alert v1.0.0.
 
 ##### Detects and notifies/auto-closes the Apex Legends Heads Up Display (HUD).
 
