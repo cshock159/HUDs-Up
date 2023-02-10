@@ -2,7 +2,7 @@
 
 ##### Detects and notifies/auto-closes the Apex Legends Heads Up Display (HUD). 
 
-#### Updates
+### Updates
 1.0.3 includes an update with auto saving of configurations used previously. To enable the auto save, simply choose your options, start Huds-Up, and when you're done, exist the program. Values will be automatically saved.
 
 ### Requirements
