@@ -7,6 +7,7 @@ pyinstaller --noconfirm --log-level=WARN ^
     HudAlert.py 
 
 copy .\resources\* .\dist\
+md .\dist\resources
 rename .\dist "Huds-Up-v%ver%"
 cd "C:\Program Files\7-Zip\"
 "C:\Program Files\7-Zip\7z.exe" a "C:\users\cshoc\Desktop\HUDs-Up-Releases\Huds-Up-V%ver%.zip" "C:\users\cshoc\downloads\HudAlert\Huds-Up-V%ver%"
