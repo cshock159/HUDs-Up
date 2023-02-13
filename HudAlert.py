@@ -2,10 +2,8 @@ import threading
 import PySimpleGUI as sg
 import pyautogui
 import pydirectinput
-import time
 import winsound
 import os
-import numpy
 import configparser
 
 # Pulling in the config file
@@ -17,6 +15,8 @@ setting_frequency = configParser.get('settings','user_frequency')
 setting_chime = configParser.get('settings','chime_option')
 setting_auto_close = configParser.get('settings','auto_close')
 setting_image_folder = (str(configParser.get('settings','image_folder')))
+setting_enable_dev_console = configParser.get('settings','dev_console')
+bool()
 
 # Variables used later on
 user = os.getlogin()
@@ -28,152 +28,181 @@ default_font = ("Helvetica","10")
 header_font = ("Helvetica","16","bold")
 options_font = ("Helvetica","8")
 subheader_font = ("Helvetica","10","bold")
+statusbar_font = ("Helvetica","7")
+default_padding = (2)
+if setting_enable_dev_console is not '':
+    default_window_size = (500,360)
+else:
+    default_window_size = (500,260)
 
 sg.theme('DarkBlue14')
 
 #### Add support for 2560x1440
-#### Add Profile Edit 
 
 # Layout building
 start_stop = [
-    [sg.Text("Start/Stop",font=header_font)],
-    [sg.Button(button_text="Start", size=(10,2),button_color="Green",bind_return_key=True,tooltip="Start HUDs-Up with the options chosen below.",font=("Comic Sans MS","10","bold")),
-    sg.Button(button_text="Stop", size=(10,2),button_color="red",tooltip="Stops HUDs-Up.",font=("Comic Sans MS","10","bold")),
-    sg.Text("Start will run the program with the last \nknown settings, or defaults if first run.\nSettings are auto-saved on exit.",font=subheader_font)], 
+    [sg.Text("Start/Stop",font=header_font,p=default_padding)],
+    [sg.Button(button_text="Start", size=(10,2),button_color="Green",bind_return_key=True,tooltip="Start HUDs-Up with the options chosen below.",font=("Comic Sans MS","10","bold"),p=default_padding),
+    sg.Button(button_text="Stop", size=(10,2),button_color="red",tooltip="Stops HUDs-Up.",font=("Comic Sans MS","10","bold"),p=default_padding),
+    sg.Text("Start will run the program with the last \nknown settings, or defaults if first run.\nSettings are auto-saved on exit.",font=subheader_font,p=((25,0),(0,0)),justification="center")], 
 ]
  
 audio_autoclose = [
-    [sg.Text("Options:",font=header_font,p=((2,3),(0,0))),
-    sg.Text("You must click 'Update Options' after changes are made.",font=subheader_font,p=((0,0),(5,0)))],    
-    [sg.Text("Detection Sensitivity",font=default_font,p=((5,75),(0,0))),
-    sg.Text(("Time Between Checks (sec)"),font=default_font)],
-    [sg.Slider(range=(0,1),orientation='h',tick_interval=.5,resolution=.05,default_value=setting_confidence,key="confidence",tooltip="Determines how sensitive image recognition is. Higher = Less Sensitive.",font=options_font,p=((7,40),(0,0))),
-    sg.Slider(range=(0,60),orientation='h',tick_interval=15,resolution=1,default_value=setting_frequency,key="frequency",tooltip="Determines the frequency in which HUDs-Up checks for the HUD.",font=options_font)],
-    [sg.Text("Browse allows you to select a custom images for detecting the HUD.",font=default_font)],
-    [sg.FolderBrowse(button_text="Choose Folder",size=(12,1),tooltip="Choose the image folder",font=options_font,key="folder_selection",p=((7,0),(0,0))),
-    sg.Checkbox(text="Audio Chime",default=setting_chime,tooltip="Plays an audio chime when HUDs-Up detects the HUD.",key="audio_cb",font=options_font),
-    sg.Checkbox(text="Auto Close HUD",default=setting_auto_close,tooltip="Auto Closes the HUD when detected.",key="autoclose_cb",font=options_font),    
-    sg.Button(button_text="Update Options",size=(12,1),tooltip="Updates the options chosen.",font=options_font),
-    sg.Button(button_text="Update CFG",size=(20,1),tooltip="Appends the config file with the necessary lines to hide the HUD.",font=options_font)]
+    [sg.Text("Options:",font=header_font,p=default_padding),
+    sg.Text("You must click 'Update Options' after changes are made.",font=subheader_font,p=default_padding)],    
+    [sg.Text("Detection Sensitivity",font=default_font,p=((53,40),(0,0))),
+    sg.Text(("Time Between Checks (sec)"),font=default_font,p=((80,40),(0,0)))],
+    [sg.Slider(range=(0,1),orientation='h',tick_interval=.5,resolution=.05,default_value=setting_confidence,key="confidence",tooltip="Determines how sensitive image recognition is. Higher = Less Sensitive.",font=options_font,p=((40,50),(0,0))),
+    sg.Slider(range=(0,10),orientation='h',tick_interval=2,resolution=1,default_value=setting_frequency,key="frequency",tooltip="Determines the frequency in which HUDs-Up checks for the HUD.",font=options_font,p=((50,40),(0,0)))],
+    [sg.Text("Browse for a custom images folder for detecting the HUD. JPG only.",font=default_font,p=default_padding)],
+    [sg.FolderBrowse(button_text="Choose Folder",size=(12,1),tooltip="Choose the image folder",font=options_font,key="folder_selection",p=default_padding),
+    sg.Checkbox(text="Audio Chime",default=setting_chime,tooltip="Plays an audio chime when HUDs-Up detects the HUD.",key="audio_cb",font=options_font,p=default_padding),
+    sg.Checkbox(text="Auto Close HUD",default=setting_auto_close,tooltip="Auto Closes the HUD when detected.",key="autoclose_cb",font=options_font,p=default_padding),    
+    sg.Button(button_text="Update Options",size=(12,1),tooltip="Updates the options chosen.",font=options_font,p=default_padding),
+    sg.Button(button_text="Update Apex Config",size=(20,1),tooltip="Appends the config file with the necessary lines to hide the HUD.",font=options_font,p=default_padding)],
+    [sg.StatusBar("Stopped",size=(90,1),expand_x=True,expand_y=True,key='statusBar',text_color="Black",font=statusbar_font,justification="Right",relief="flat",background_color="#b9d4f1")]
 ]
 
+visibility = bool(setting_enable_dev_console is not '')
 output_console = [
-    [sg.Output(text_color="Green",size=(90,5))]
+    [sg.Output(text_color="Green",size=(90,5),p=default_padding,visible=visibility)]
 ]
 
 layout = [
-        [
-        sg.Column(start_stop)
-        ],
-        [
-        sg.HorizontalSeparator(p=5)
-        ],
-        [
-        sg.Column(audio_autoclose)
-        ],
-        [
-        sg.HorizontalSeparator(p=5)
-        ],
-        [
-        sg.Column(output_console)
-        ]
-]
+            [
+            sg.Column(start_stop)
+            ],
+            [
+            sg.HorizontalSeparator()
+            ],
+            [
+            sg.Column(audio_autoclose)
+            ],
+            [
+            sg.HorizontalSeparator()
+            ],
+            [
+            sg.Column(output_console)
+            ]
+    ]
 
-# Finding the image on screen
-def multi_image_recognition():
-    print("HUDs up is now running.")
-    while SHOULD_TERMINATE == False:
-        for images in os.listdir(os.getcwd()):
-            ### This can realistically be changed to PNGs. I believe PNGs are a bit more accurate, I just didn't have much success.
-            ### Consider rewriting this to search for specific white pixels in healthbar location/name/squadsleft. 
-            ### This would eliminate the need for confidence, but I would need to account for various screen resolutions
-            if images.endswith(".jpg"):
-                image_location = pyautogui.locateOnScreen(images,confidence=values["confidence"])
-                if image_location is not None:
-                    print("HUD was detected.") 
-                    if values["audio_cb"] == True:
-                        winsound.PlaySound(alertsound, winsound.SND_FILENAME)
-                    if values["autoclose_cb"] == True:
-                        print("Closing HUD.")
-                        pydirectinput.keyDown('7')
-                        pydirectinput.keyDown('esc')
-                        pydirectinput.keyUp('esc')
-                        pydirectinput.keyUp('7')
-        time.sleep(values["frequency"])
+def main():
+    # Appends the apex configuration file with the hide hud option
+    def appendProfile():
+        with open(apexProfile, "a") as cfgFile:
+            cfgFile.write('\nbind "7" "+; gameui_hide"')
 
-def appendProfile():
-    with open(apexProfile, "a") as cfgFile:
-        cfgFile.write('\nbind "7" "+; gameui_hide"')
+    # Determines where we should look for images. If none are found, it pulls from the root of its own directory.
+    def findmyimage():
+        if values["folder_selection"]:
+            image_folder = str(values["folder_selection"])
+        elif setting_image_folder:
+            image_folder = setting_image_folder
+        elif setting_image_folder == "" :
+            image_folder = (os.getcwd().replace("\\","/"))
+        return image_folder
 
-# Determines where we should look for images. If none are found, it pulls from the root of its own directory.
-def findmyimage():
-    if values["folder_selection"]:
-        image_folder = str(values["folder_selection"])
-    elif setting_image_folder:
-        image_folder = setting_image_folder
-    elif setting_image_folder == "" :
-        image_folder = (os.getcwd().replace("\\","/"))
-    return image_folder
+    # Takes the values from the last known start/update option start
+    def autosave():
+        try:
+            configParser['settings']['user_confidence'] = str(value_storage["confidence"])
+            configParser['settings']['user_frequency'] = str(value_storage["frequency"])
+            configParser['settings']['auto_close'] = str(value_storage["autoclose_cb"])
+            configParser['settings']['chime_option'] = str(value_storage["audio_cb"])
+            with open('settings.cfg','w') as configfile:
+                configParser.write(configfile)
+        except:
+            print("Couldn't save user settings.")
 
-# Takes the values from the last known start/update option start
-def autosave():
-    try:
-        configParser['settings']['user_confidence'] = str(value_storage["confidence"])
-        configParser['settings']['user_frequency'] = str(value_storage["frequency"])
-        configParser['settings']['auto_close'] = str(value_storage["autoclose_cb"])
-        configParser['settings']['chime_option'] = str(value_storage["audio_cb"])
-        with open('settings.cfg','w') as configfile:
-            configParser.write(configfile)
-    except:
-        print("Couldn't save user settings.")
+    # Finding the image on screen
+    def multi_image_recognition():
+        print("HUDs up is now running.")
+        window['statusBar'].Update("Running")
+        while SHOULD_TERMINATE == False:
+            for images in os.listdir(os.getcwd()):
+                if images.endswith(".jpg"):
+                    image_location = pyautogui.locateOnScreen(images,confidence=values["confidence"])
+                    if image_location is not None:
+                        print("HUD was detected.")
+                        window['statusBar'].Update("HUD Detected")
+                        if values["audio_cb"] == True:
+                            winsound.PlaySound(alertsound, winsound.SND_FILENAME)
+                        if values["autoclose_cb"] == True:
+                            print("Closing HUD.")
+                            window['statusBar'].Update("HUD Closed")
+                            pydirectinput.keyDown('7')
+                            pydirectinput.keyDown('esc')
+                            pydirectinput.keyUp('esc')
+                            pydirectinput.keyUp('7')
+            pixelColorDetection()
+            threading.Event().wait(values["frequency"])
 
-window = sg.Window(title="HUDs-Up", layout=layout, size=(500,425),icon=(menuicon),titlebar_icon=menuicon)
-while True:
-    event, values = window.Read()
-    if event == sg.WIN_CLOSED:
-        autosave()
-        break
-    currentvalue = str(values["confidence"])
-    if event == "Start":
-        image_folder_location = findmyimage()
-        SHOULD_TERMINATE = False
+    def pixelColorDetection():
+    ## Health Bar Location is 179, 1017. Truecolor is (255, 255, 255) / Health Bar is consistent
+    ## Map White Location is 53, 43. True color is 225,225,225 / map is consistent, but pixel is in gray if we care.
+    ## Squads white location 1837, 76. Same true color / Squads is consistent
+    ## Ult Grey Position 959, 912. True Color (186, 185, 184) / This is super inconsistent. 
+    ## Direction Number Location 931, 110. True Color (210, 210, 210) / Not very consistent, but we could user 210 +/- 15, but this still might not be wide enough.
+        pixelColor_healthBar = pyautogui.pixel(179, 1017)
+        pixelColor_map = pyautogui.pixel(53, 43)
+        pixelColor_squads = pyautogui.pixel(1837, 76)
+        pixelColor_ultTopBar = pyautogui.pixel(959, 912)
+        pixelColor_compassNumberBar = pyautogui.pixel(931, 110)
+        print(pixelColor_healthBar)
+        print(pixelColor_squads)
+        print(pixelColor_map)
+        print(pixelColor_ultTopBar)
+        print(pixelColor_compassNumberBar)
+
+    def startProcess():
         with open(apexProfile, 'r') as cfgFile:
             lastLine = cfgFile.readlines()[-1]
         if lastLine == 'bind "7" "+; gameui_hide"':
-            print("Starting HUDs-UP with images in: " + image_folder_location + " and a confidence of " + currentvalue)
+            print("Starting HUDs-UP with images in: " + image_folder_location + " and a confidence of " + str(values["confidence"]))
+            window['statusBar'].Update("Starting")
             window["Start"].Update(disabled=True)        
             thread = threading.Thread(target=multi_image_recognition, daemon=True)
             thread.start()
+            return thread
         else:
-            print("The Apex configuration is not prepared for No Hud. Please click 'Update CFG' to resolve this and try again.")
-    elif event == "Stop":
-        print("Terminating HUDs Up.")
-        value_storage = values
-        autosave()
-        SHOULD_TERMINATE = True
-        try:
-            thread.join()
-            print("HUDs-Up Stopped.")
-        except:
-            print("Nothing to stop.")
-        window["Start"].Update(disabled=False)
-    elif event == "Update Options":
-        print("Refreshing HUDs-Up.")
-        SHOULD_TERMINATE = True
-        try:
-            thread.join()
-        except:
-            print("Nothing to refresh. Starting.")
-        image_folder_location = findmyimage()
-        SHOULD_TERMINATE = False
-        with open(apexProfile, 'r') as cfgFile:
-            lastLine = cfgFile.readlines()[-1]
-        if lastLine == 'bind "7" "+; gameui_hide"':
-            print("Starting HUDs-UP with images in: " + image_folder_location + " and a confidence of " + currentvalue)
-            window["Start"].Update(disabled=True)        
-            thread = threading.Thread(target=multi_image_recognition, daemon=True)
-            thread.start()
-        else:
-            print("The Apex configuration is not prepared for No Hud. Please click 'Update CFG' to resolve this and try again.")
-    elif event == "Update CFG":
-        appendProfile()
+            sg.popup("The Apex configuration is not prepared for No Hud. Please manually update the config file or click 'Update CFG' to resolve this and try again. \n\nPress any key to continue.",title="Incorrect Apex Configuration",keep_on_top=True,background_color="#C14921",font=subheader_font,any_key_closes=True,button_type=5)
+
+    # Main program loop
+    window = sg.Window(title="HUDs-Up", layout=layout,size=default_window_size,icon=(menuicon),titlebar_icon=menuicon,margins=(0,0),element_padding=(0))
+    while True:
+        event, values = window.Read()
+        if event == sg.WIN_CLOSED:
+            autosave()
+            break
+        if event == "Start":
+            image_folder_location = findmyimage()
+            SHOULD_TERMINATE = False
+            thread = startProcess()
+        elif event == "Stop":
+            SHOULD_TERMINATE = True
+            print("Terminating HUDs Up.")
+            value_storage = values
+            autosave()
+            try:
+                thread.join()
+                print("HUDs-Up Stopped.")
+            except:
+                print("Nothing to stop.")
+            window["Start"].Update(disabled=False)
+            window['statusBar'].Update("Stopped")
+        elif event == "Update Options":
+            print("Refreshing HUDs-Up.")
+            SHOULD_TERMINATE = True
+            try:
+                thread.join()
+            except:
+                print("Nothing to refresh. Starting.")
+            image_folder_location = findmyimage()
+            SHOULD_TERMINATE = False
+            startProcess()
+        elif event == "Update Apex Config":
+            appendProfile()
+            window['statusBar'].Update("Apex Profile Updated.")
+
+if __name__ == "__main__":
+    main()
